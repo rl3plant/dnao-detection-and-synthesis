@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dnao-detection-and-synthesis"
+version = "0.1.0"
+description = "Classical-CV DNA-origami shape detection and mask-conditioned DDPM image synthesis for AFM data (from Noah Ruhmer's MSc thesis, TU Graz, 2024)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Noah Ruhmer" },
+]
+
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "scipy",
+    "scikit-learn",
+    "scikit-image",
+    "imutils",
+    # pySPM deliberately NOT listed here - see README's Install section. Its
+    # own pin (numpy<2, scikit-image<0.21) conflicts with the modern versions
+    # above and fails to build from source on current Python if pip tries to
+    # resolve it normally; install it separately with --no-deps instead.
+    "igor2",
+    "tifffile",
+    "Pillow",
+]
+
+[project.optional-dependencies]
+# The mask-conditioned DDPM image synthesis half of the pipeline. Kept separate
+# from the base install since torch is heavy and platform/CUDA-version specific -
+# install a torch build matching your hardware first (see README), then this extra.
+synthesis = [
+    "torch",
+    "torchvision",
+    "diffusers",
+    "datasets",
+    "torchmetrics",
+    "tensorboard",
+    "tqdm",
+]
+dev = [
+    "pytest",
+]
+
+[project.scripts]
+dnao = "dnao.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
